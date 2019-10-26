@@ -3,7 +3,11 @@ use wasm_bindgen::prelude::*;
 
 fn start_plotting(
     element: &str,
-    pow: i32,
+    rate: f32,
+    max: f32,
+    mid: f32,
+    y_min: f32,
+    y_max: f32,
 ) -> Result<Box<dyn Fn((i32, i32)) -> Option<(f32, f32)>>, Box<dyn std::error::Error>> {
     let backend = CanvasBackend::new(element).unwrap();
     let root = backend.into_drawing_area();
@@ -12,17 +16,17 @@ fn start_plotting(
     root.fill(&WHITE)?;
 
     let mut chart = ChartBuilder::on(&root)
-        .caption(format!("y=x^{}", pow), font)
+        .caption(format!("{}/1-e^(-{}*(x-{}))", max, rate, mid), font)
         .x_label_area_size(30)
         .y_label_area_size(30)
-        .build_ranged(-1f32..1f32, -1.2f32..1.2f32)?;
+        .build_ranged(y_min..y_max, 0f32..1.1f32 * max)?;
 
     chart.configure_mesh().x_labels(3).y_labels(3).draw()?;
 
     chart.draw_series(LineSeries::new(
-        (-50..=50)
+        (y_min as i32 * 1000..= y_max as i32 * 1000)
             .map(|x| x as f32 / 50.0)
-            .map(|x| (x, x.powf(pow as f32))),
+            .map(|x| (x, max / ( 1f32 + (-rate * (x - mid)).exp2()))),
         &RED,
     ))?;
 
@@ -31,6 +35,6 @@ fn start_plotting(
 }
 
 #[wasm_bindgen]
-pub fn draw_func(element: &str, p: i32) -> JsValue {
-    crate::make_coord_mapping_closure(start_plotting(element, p).ok())
+pub fn draw_func(element: &str, rate: f32, max: f32, mid: f32, y_min: f32, y_max: f32) -> JsValue {
+    crate::make_coord_mapping_closure(start_plotting(element, rate, max, mid, y_min, y_max).ok())
 }
