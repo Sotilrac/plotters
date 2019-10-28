@@ -1,13 +1,11 @@
 use wasm_bindgen::prelude::*;
 
 mod func_plot;
-mod mandelbrot;
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 pub use func_plot::draw_func;
-pub use mandelbrot::draw_mandelbrot;
 
 pub fn make_coord_mapping_closure<T: Into<f64> + 'static>(
     map_func: Option<Box<dyn Fn((i32, i32)) -> Option<(T, T)>>>,

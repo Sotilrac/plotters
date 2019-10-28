@@ -4,12 +4,17 @@
 		<meta charset="utf-8">
 		<title>Sigmoid Maker</title>
 		<link rel="stylesheet" href="./style.css">
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body>
 		<div>
 			<h1 class="centered">Sigmoid Maker</h1>
 			<div id="coord" class='centered' style='color: grey; font-size: 10px; height: 15px'></div>
-			<canvas id="canvas" class="centered" height=400 width=600></canvas>
+			<canvas id="canvas" class="centered" height="400" width="600"></canvas>
+			<div id="formula">
+				<p>\[Max \over {1-e^{-Rate(x-Midpoint)}}\]</p>
+			</div>
 			<div id="status" class='centered' style='color: grey; font-size: 10px'>Loading WebAssembly...</div>
 			<div style="margin-top:20px"></div>
 			<div class="control">
@@ -20,19 +25,10 @@
 					<li><label>y Min</label><input type="number" id="y_min" name="Growth rate" value="-1.0" placeholder=""></li>
 					<li><label>y Max</label><input type="number" id="y_max" name="Growth rate" value="1.0" placeholder=""></li>
 				</ul>
-				
 			</div>
 		</div>
 		<div style="margin-top:50px"></div>
-		<div class='centered' style='font-size: 12px;'>
-			<div class='code-link'> 
-				<a href="https://github.com/38/plotters/blob/master/examples/wasm-demo" target='a'>Source</a> | 
-				<a href="https://github.com/38/plotters" target='a'>Repo</a> | 
-				<a href="https://crates.io/crates/plotters" target='a'>Crates</a> | 
-				<a href="https://docs.rs/plotters" target='a'>Docs</a>
-			</div>
-		</div>
-			
+		
 		<script type="module">
 			import * as wasm from "./pkg/wasm_demo.js";
 			wasm.default("./pkg/wasm_demo_bg.wasm").then(function() {
@@ -68,11 +64,8 @@
 						stat.innerText = "Rendered in " + (end - start) + "ms";
 					}, 5);
 				}
-
 				stat.innerText = "WebAssembly loaded!";
-
 				update_plot();
-
 				input_rate.addEventListener("change", function (e) {update_plot();});
 				input_mid.addEventListener("change", function (e) {update_plot();});
 				input_max.addEventListener("change", function (e) {update_plot();});
